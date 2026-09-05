@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>落とし物ナビ（東京）</title>
+<style>
+  :root{
+    --navy:#1a3a6b;
+    --navy-light:#e8edf5;
+    --danger:#c0392b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:0;
+    background:#ffffff;
+    color:#1a1a1a;
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:16px 12px;
+    text-align:center;
+  }
+  header h1{
+    margin:0;
+    font-size:20px;
+  }
+  header p{
+    margin:4px 0 0;
+    font-size:13px;
+    opacity:0.85;
+  }
+  nav{
+    display:flex;
+    flex-wrap:wrap;
+    background:var(--navy-light);
+    position:sticky;
+    top:0;
+    z-index:10;
+    border-bottom:2px solid var(--navy);
+  }
+  nav button{
+    flex:1 1 30%;
+    padding:10px 4px;
+    font-size:13px;
+    border:none;
+    background:transparent;
+    color:var(--navy);
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+  }
+  nav button.active{
+    background:#fff;
+    border-bottom:3px solid var(--navy);
+    font-weight:bold;
+  }
+  main{
+    padding:16px 14px 40px;
+    max-width:600px;
+    margin:0 auto;
+  }
+  section.tab{
+    display:none;
+  }
+  section.tab.active{
+    display:block;
+    animation:fadein 0.2s ease;
+  }
+  @keyframes fadein{
+    from{opacity:0;}
+    to{opacity:1;}
+  }
+  h2{
+    color:var(--navy);
+    font-size:18px;
+    border-left:6px solid var(--navy);
+    padding-left:10px;
+    margin-top:0;
+  }
+  h3{
+    color:var(--navy);
+    font-size:16px;
+    margin-bottom:6px;
+  }
+  label{
+    display:block;
+    font-weight:bold;
+    margin:14px 0 4px;
+    font-size:15px;
+  }
+  input[type="text"],
+  input[type="datetime-local"],
+  select,
+  textarea{
+    width:100%;
+    padding:10px;
+    font-size:16px;
+    border:2px solid #ccc;
+    border-radius:8px;
+    background:#fff;
+    color:#1a1a1a;
+  }
+  textarea{
+    min-height:70px;
+    resize:vertical;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    padding:14px;
+    margin-top:16px;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    background:var(--navy);
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    text-align:center;
+    text-decoration:none;
+  }
+  .btn:active{
+    opacity:0.8;
+  }
+  .btn-sub{
+    background:#fff;
+    color:var(--navy);
+    border:2px solid var(--navy);
+  }
+  .btn-danger{
+    background:var(--danger);
+  }
+  .card{
+    background:var(--navy-light);
+    border-radius:10px;
+    padding:14px;
+    margin-top:14px;
+  }
+  .warn{
+    background:#fff4e5;
+    border:2px solid #e67e22;
+    border-radius:10px;
+    padding:12px;
+    margin-top:14px;
+    font-size:15px;
+  }
+  .scam{
+    background:var(--danger);
+    color:#fff;
+    padding:14px;
+    border-radius:10px;
+    font-weight:bold;
+    margin:16px 0;
+    font-size:15px;
+  }
+  .note{
+    font-size:13px;
+    color:#555;
+    margin-top:6px;
+  }
+  .result-box{
+    background:#fff;
+    border:2px dashed var(--navy);
+    border-radius:10px;
+    padding:12px;
+    margin-top:12px;
+    font-size:15px;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .step-list{
+    padding-left:20px;
+  }
+  .step-list li{
+    margin-bottom:10px;
+  }
+  footer{
+    background:var(--navy-light);
+    text-align:center;
+    padding:18px 14px;
+    font-size:12px;
+    color:#444;
+    margin-top:20px;
+  }
+  footer p{
+    margin:4px 0;
+  }
+  .saved-badge{
+    display:inline-block;
+    background:#2ecc71;
+    color:#fff;
+    font-size:12px;
+    padding:2px 8px;
+    border-radius:12px;
+    margin-left:6px;
+  }
+  #confetti-wrap{
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    pointer-events:none;
+    overflow:hidden;
+    display:none;
+    z-index:999;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:-10px;
+    width:10px;
+    height:14px;
+    opacity:0.9;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{
+      transform:translateY(110vh) rotate(360deg);
+      opacity:0.3;
+    }
+  }
+  .found-message{
+    text-align:center;
+    padding:30px 10px;
+  }
+  .found-message .big{
+    font-size:48px;
+  }
+</style>
+</head>
+<body>
+
+<div id="confetti-wrap"></div>
+
+<header>
+  <h1>🔎 落とし物ナビ（東京）</h1>
+  <p>あわてず、順番に進めましょう</p>
+</header>
+
+<nav id="tabNav">
+  <button data-tab="tab1" class="active">① 落ち着いて</button>
+  <button data-tab="tab2">② 警視庁で探す</button>
+  <button data-tab="tab3">③ 遺失届を出す</button>
+  <button data-tab="tab4">④ 鍵の特記</button>
+  <button data-tab="tab5">⑤ 見つかった！</button>
+</nav>
+
+<main>
+
+  <!-- TAB1 -->
+  <section id="tab1" class="tab active">
+    <h2>① まず落ち着いてチェックリスト</h2>
+    <p>思い出せる範囲でOKです。あとで見返せるように端末に保存します。</p>
+
+    <label for="place1">最後に持っていた場所</label>
+    <input type="text" id="place1" placeholder="例: 渋谷駅の改札付近、〇〇カフェ">
+
+    <label for="time1">おおよその時刻</label>
+    <input type="datetime-local" id="time1">
+
+    <label for="route1">移動経路（あてはまるものを選択）</label>
+    <select id="route1">
+      <option value="">選択してください</option>
+      <option value="train">電車（JR・私鉄・地下鉄）</option>
+      <option value="bus">バス</option>
+      <option value="taxi">タクシー</option>
+      <option value="store">店・施設（カフェ・コンビニ・商業施設など）</option>
+      <option value="other">その他・わからない</option>
+    </select>
+
+    <label for="memo1">補足メモ（乗った路線名・店名など）</label>
+    <textarea id="memo1" placeholder="例: 東急東横線 渋谷→自由が丘、〇〇書店"></textarea>
+
+    <button class="btn" id="saveTab1">この内容を保存する<span id="saved1Badge"></span></button>
+
+    <div class="card" id="contactSuggestion" style="display:none;">
+      <h3>📞 まず連絡すべき先の候補</h3>
+      <div id="contactSuggestionBody"></div>
+    </div>
+
+    <div class="warn">
+      💡 電話番号は変わることがあるため、このアプリからは直接電話番号を案内していません。ボタンからGoogle検索を開いて、最新の連絡先をご確認ください。
+    </div>
+  </section>
+
+  <!-- TAB2 -->
+  <section id="tab2" class="tab">
+    <h2>② 警視庁の遺失物公表サイトで探す</h2>
+    <p>警視庁が公表している落とし物情報を検索できます。</p>
+
+    <a class="btn" href="https://www.ishitsu.keishicho.metro.tokyo.lg.jp/syutoku" target="_blank" rel="noopener">🌐 警視庁 遺失物公表サイトを開く</a>
+
+    <div class="warn">
+      ⚠️ 知っておきたいポイント
+      <ul class="step-list">
+        <li>公表されるのは<strong>届け出から約3ヶ月間</strong>です</li>
+        <li>拾得されてからネットに<strong>載るまで数日かかる</strong>ことがあります</li>
+        <li><strong>土日・祝日はデータが更新されません</strong></li>
+        <li>見つかったら表示される<strong>17ケタの問合せ番号</strong>を必ず控えてください</li>
+        <li>番号を控えたら、<strong>警察署へ電話</strong>して確認します（受付は平日 8:30〜17:15）</li>
+      </ul>
+    </div>
+
+    <label for="inquiryNumber">見つかった場合の問合せ番号（17ケタ）</label>
+    <input type="text" id="inquiryNumber" placeholder="例: 12345678901234567" maxlength="30">
+    <button class="btn btn-sub" id="saveInquiry">問合せ番号を保存する<span id="savedInquiryBadge"></span></button>
+
+    <div class="card" id="savedInquiryDisplay" style="display:none;"></div>
+  </section>
+
+  <!-- TAB3 -->
+  <section id="tab3" class="tab">
+    <h2>③ 遺失届をオンラインで出す</h2>
+
+    <div class="scam">
+      🚨 詐欺注意<br>
+      「遺失物センターです」等をかたる<strong>自動音声電話</strong>に注意してください。警視庁や警察がこの形で個人情報・お金・カード情報を尋ねることはありません。不審な電話は折り返さず、公式サイトから確認しましょう。
+    </div>
+
+    <a class="btn" href="https://www.keishicho-gto.metro.tokyo.lg.jp/keishicho-u/offer/offerList_initDisplay.action" target="_blank" rel="noopener">📝 遺失届オンライン受付を開く</a>
+
+    <p class="note">お問い合わせ: 0120-464-119（平日9:00〜17:00）</p>
+
+    <h3>届出内容の下書き</h3>
+    <p>先に以下を埋めておくと、オンライン入力がスムーズです。</p>
+
+    <label for="itemName">品名</label>
+    <input type="text" id="itemName" placeholder="例: 黒い折りたたみ傘">
+
+    <label for="itemFeature">特徴</label>
+    <textarea id="itemFeature" placeholder="例: 持ち手に傷、ブランドロゴあり"></textarea>
+
+    <label for="itemColor">色</label>
+    <input type="text" id="itemColor" placeholder="例: 黒">
+
+    <label for="itemQty">数量</label>
+    <input type="text" id="itemQty" placeholder="例: 1本">
+
+    <label for="lostDatetime">なくした日時</label>
+    <input type="datetime-local" id="lostDatetime">
+
+    <label for="lostPlace">なくした場所</label>
+    <input type="text" id="lostPlace" placeholder="例: 渋谷駅〜自由が丘駅間の電車内">
+
+    <label for="contactInfo">連絡先（電話番号・メール等）</label>
+    <input type="text" id="contactInfo" placeholder="例: 090-xxxx-xxxx">
+
+    <button class="btn" id="buildSummary">内容をまとめる</button>
+
+    <div class="result-box" id="summaryResult" style="display:none;"></div>
+    <button class="btn btn-sub" id="copySummary" style="display:none;">📋 まとめた内容をコピーする<span id="copiedBadge"></span></button>
+  </section>
+
+  <!-- TAB4 -->
+  <section id="tab4" class="tab">
+    <h2>④ 鍵をなくしたときの特記</h2>
+    <p>鍵は特に急ぐべきケースがあります。以下を確認してください。</p>
+
+    <div class="card">
+      <h3>🏠 住所と鍵が一緒だった場合</h3>
+      <p>すぐに<strong>管理会社・大家</strong>へ連絡してください。住所が特定できる状態で鍵を失くすと、悪用されるリスクがあります。</p>
+    </div>
+
+    <div class="card">
+      <h3>🔧 シリンダー交換の判断</h3>
+      <p>鍵に住所や部屋番号が分かる情報が付いていた場合は、費用がかかっても<strong>シリンダー交換</strong>を検討しましょう。管理会社・大家に相談すれば費用負担のルールを確認できます。</p>
+    </div>
+
+    <div class="card">
+      <h3>🚗 車の鍵の場合</h3>
+      <p><strong>ディーラー</strong>または購入店に連絡してください。スペアキー作成やスマートキーの無効化ができる場合があります。</p>
+    </div>
+  </section>
+
+  <!-- TAB5 -->
+  <section id="tab5" class="tab">
+    <h2>⑤ 見つかった！</h2>
+    <p>無事に見つかったら、下のボタンを押してください。</p>
+
+    <button class="btn" id="foundBtn">🎉 見つかった！</button>
+
+    <div id="foundMessageArea"></div>
+  </section>
+
+</main>
+
+<footer>
+  <p>このアプリは非公式・無料です。個人情報を外部へ送信することはなく、すべてこの端末（ブラウザ）内にのみ保存されます。</p>
+  <p>Claude と一緒に作りました。</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "otoshimono_navi_v1";
+
+  function loadData(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveData(data){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }catch(e){
+      // 保存できない環境（プライベートモード等）。意図的にエラーは握りつぶさずコンソールに出すのみ。
+      console.warn("localStorageへの保存に失敗しました", e);
+    }
+  }
+
+  var data = loadData();
+
+  // タブ切り替え
+  var navButtons = document.querySelectorAll("#tabNav button");
+  var tabs = document.querySelectorAll("section.tab");
+
+  function activateTab(tabId){
+    navButtons.forEach(function(btn){
+      btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
+    });
+    tabs.forEach(function(sec){
+      sec.classList.toggle("active", sec.id === tabId);
+    });
+    window.scrollTo(0,0);
+  }
+
+  navButtons.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      activateTab(btn.getAttribute("data-tab"));
+    });
+  });
+
+  // --- TAB1: チェックリスト ---
+  var place1 = document.getElementById("place1");
+  var time1 = document.getElementById("time1");
+  var route1 = document.getElementById("route1");
+  var memo1 = document.getElementById("memo1");
+  var saveTab1Btn = document.getElementById("saveTab1");
+  var saved1Badge = document.getElementById("saved1Badge");
+  var contactBox = document.getElementById("contactSuggestion");
+  var contactBody = document.getElementById("contactSuggestionBody");
+
+  if(data.tab1){
+    place1.value = data.tab1.place || "";
+    time1.value = data.tab1.time || "";
+    route1.value = data.tab1.route || "";
+    memo1.value = data.tab1.memo || "";
+    if(data.tab1.route){
+      renderContactSuggestion(data.tab1.route, data.tab1.memo);
+    }
+  }
+
+  function googleSearchUrl(query){
+    return "https://www.google.com/search?q=" + encodeURIComponent(query);
+  }
+
+  function renderContactSuggestion(route, memo){
+    var html = "";
+    var searchQuery = "";
+
+    if(route === "train"){
+      html += "<p>電車内・駅構内でなくした場合は、まず<strong>その鉄道会社の忘れ物センター</strong>に連絡します。</p>";
+      searchQuery = (memo ? memo + " " : "") + "忘れ物センター 電話番号";
+    }else if(route === "bus"){
+      html += "<p>バス車内でなくした場合は、<strong>そのバス会社の忘れ物窓口</strong>に連絡します。乗車した系統・時刻が分かるとスムーズです。</p>";
+      searchQuery = (memo ? memo + " " : "") + "バス 忘れ物 問い合わせ";
+    }else if(route === "taxi"){
+      html += "<p>タクシー車内でなくした場合は、<strong>利用したタクシー会社</strong>へ連絡します。領収書があれば会社名・車両番号が分かります。</p>";
+      searchQuery = (memo ? memo + " " : "") + "タクシー会社 忘れ物 問い合わせ";
+    }else if(route === "store"){
+      html += "<p>店舗・施設でなくした場合は、<strong>その店舗に直接</strong>連絡するのが一番早いです。</p>";
+      searchQuery = (memo ? memo + " " : "") + "忘れ物 問い合わせ";
+    }else{
+      html += "<p>経路がはっきりしない場合は、②の警視庁遺失物公表サイトと③の遺失届を並行して進めましょう。</p>";
+    }
+
+    if(searchQuery){
+      html += '<a class="btn btn-sub" target="_blank" rel="noopener" href="' + googleSearchUrl(searchQuery) + '">🔍 ' + escapeHtml(searchQuery) + ' を検索</a>';
+    }
+
+    contactBody.innerHTML = html;
+    contactBox.style.display = "block";
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  saveTab1Btn.addEventListener("click", function(){
+    data.tab1 = {
+      place: place1.value,
+      time: time1.value,
+      route: route1.value,
+      memo: memo1.value
+    };
+    saveData(data);
+    saved1Badge.textContent = "保存しました";
+    saved1Badge.className = "saved-badge";
+    setTimeout(function(){ saved1Badge.textContent = ""; }, 2500);
+    renderContactSuggestion(route1.value, memo1.value);
+  });
+
+  // --- TAB2: 問合せ番号 ---
+  var inquiryNumber = document.getElementById("inquiryNumber");
+  var saveInquiryBtn = document.getElementById("saveInquiry");
+  var savedInquiryBadge = document.getElementById("savedInquiryBadge");
+  var savedInquiryDisplay = document.getElementById("savedInquiryDisplay");
+
+  function renderSavedInquiry(){
+    if(data.inquiryNumber){
+      savedInquiryDisplay.style.display = "block";
+      savedInquiryDisplay.innerHTML = "<strong>保存済みの問合せ番号:</strong><br>" + escapeHtml(data.inquiryNumber);
+    }
+  }
+
+  if(data.inquiryNumber){
+    inquiryNumber.value = data.inquiryNumber;
+    renderSavedInquiry();
+  }
+
+  saveInquiryBtn.addEventListener("click", function(){
+    data.inquiryNumber = inquiryNumber.value;
+    saveData(data);
+    savedInquiryBadge.textContent = "保存しました";
+    savedInquiryBadge.className = "saved-badge";
+    setTimeout(function(){ savedInquiryBadge.textContent = ""; }, 2500);
+    renderSavedInquiry();
+  });
+
+  // --- TAB3: 遺失届まとめ ---
+  var itemName = document.getElementById("itemName");
+  var itemFeature = document.getElementById("itemFeature");
+  var itemColor = document.getElementById("itemColor");
+  var itemQty = document.getElementById("itemQty");
+  var lostDatetime = document.getElementById("lostDatetime");
+  var lostPlace = document.getElementById("lostPlace");
+  var contactInfo = document.getElementById("contactInfo");
+  var buildSummaryBtn = document.getElementById("buildSummary");
+  var summaryResult = document.getElementById("summaryResult");
+  var copySummaryBtn = document.getElementById("copySummary");
+  var copiedBadge = document.getElementById("copiedBadge");
+
+  if(data.tab3){
+    itemName.value = data.tab3.itemName || "";
+    itemFeature.value = data.tab3.itemFeature || "";
+    itemColor.value = data.tab3.itemColor || "";
+    itemQty.value = data.tab3.itemQty || "";
+    lostDatetime.value = data.tab3.lostDatetime || "";
+    lostPlace.value = data.tab3.lostPlace || "";
+    contactInfo.value = data.tab3.contactInfo || "";
+  }
+
+  function buildSummaryText(){
+    var lines = [
+      "【遺失届 入力用まとめ】",
+      "品名: " + (itemName.value || "（未入力）"),
+      "特徴: " + (itemFeature.value || "（未入力）"),
+      "色: " + (itemColor.value || "（未入力）"),
+      "数量: " + (itemQty.value || "（未入力）"),
+      "なくした日時: " + (lostDatetime.value || "（未入力）"),
+      "なくした場所: " + (lostPlace.value || "（未入力）"),
+      "連絡先: " + (contactInfo.value || "（未入力）")
+    ];
+    return lines.join("\n");
+  }
+
+  buildSummaryBtn.addEventListener("click", function(){
+    data.tab3 = {
+      itemName: itemName.value,
+      itemFeature: itemFeature.value,
+      itemColor: itemColor.value,
+      itemQty: itemQty.value,
+      lostDatetime: lostDatetime.value,
+      lostPlace: lostPlace.value,
+      contactInfo: contactInfo.value
+    };
+    saveData(data);
+
+    var text = buildSummaryText();
+    summaryResult.textContent = text;
+    summaryResult.style.display = "block";
+    copySummaryBtn.style.display = "block";
+  });
+
+  copySummaryBtn.addEventListener("click", function(){
+    var text = buildSummaryText();
+    var done = function(){
+      copiedBadge.textContent = "コピーしました";
+      copiedBadge.className = "saved-badge";
+      setTimeout(function(){ copiedBadge.textContent = ""; }, 2500);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){
+        fallbackCopy(text, done);
+      });
+    }else{
+      fallbackCopy(text, done);
+    }
+  });
+
+  function fallbackCopy(text, cb){
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try{
+      document.execCommand("copy");
+    }catch(e){
+      console.warn("コピーに失敗しました", e);
+    }
+    document.body.removeChild(ta);
+    cb();
+  }
+
+  // --- TAB5: 見つかった！ ---
+  var foundBtn = document.getElementById("foundBtn");
+  var foundMessageArea = document.getElementById("foundMessageArea");
+  var confettiWrap = document.getElementById("confetti-wrap");
+
+  var confettiColors = ["#1a3a6b", "#e67e22", "#2ecc71", "#e74c3c", "#f1c40f"];
+
+  function launchConfetti(){
+    confettiWrap.innerHTML = "";
+    confettiWrap.style.display = "block";
+    var count = 60;
+    for(var i = 0; i < count; i++){
+      var piece = document.createElement("div");
+      piece.className = "confetti-piece";
+      piece.style.left = (Math.random() * 100) + "vw";
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.animationDuration = (2 + Math.random() * 2) + "s";
+      piece.style.animationDelay = (Math.random() * 0.5) + "s";
+      confettiWrap.appendChild(piece);
+    }
+    setTimeout(function(){
+      confettiWrap.style.display = "none";
+      confettiWrap.innerHTML = "";
+    }, 4500);
+  }
+
+  foundBtn.addEventListener("click", function(){
+    launchConfetti();
+    foundMessageArea.innerHTML =
+      '<div class="found-message">' +
+      '<div class="big">🎊✨🎊</div>' +
+      '<h3>よかったです！</h3>' +
+      '<p>③で遺失届を出していた場合は、<strong>取り下げの連絡</strong>も忘れずに行いましょう。</p>' +
+      '</div>';
+  });
+
+})();
+</script>
+
+</body>
+</html>
