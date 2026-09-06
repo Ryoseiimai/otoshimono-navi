@@ -228,6 +228,47 @@
   .found-message .big{
     font-size:48px;
   }
+  .field-item{
+    background:#fff;
+    border:2px solid var(--navy);
+    border-radius:8px;
+    padding:10px;
+    margin-top:10px;
+  }
+  .field-item-label{
+    font-size:16px;
+    font-weight:bold;
+    color:var(--navy);
+    margin-bottom:4px;
+  }
+  .field-item-value{
+    font-size:16px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    margin-bottom:8px;
+  }
+  .copy-btn-sm{
+    display:inline-block;
+    padding:8px 14px;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    background:var(--navy);
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .copy-btn-sm.copied{
+    background:#2ecc71;
+  }
+  .hidden-field{
+    display:none;
+  }
+  .subgroup{
+    border-left:4px solid var(--navy);
+    padding-left:10px;
+    margin-top:10px;
+  }
 </style>
 </head>
 <body>
@@ -245,6 +286,7 @@
   <button data-tab="tab3">③ 遺失届を出す</button>
   <button data-tab="tab4">④ 鍵の特記</button>
   <button data-tab="tab5">⑤ 見つかった！</button>
+  <button data-tab="tab6">⑥ 遺失届の下書き</button>
 </nav>
 
 <main>
@@ -382,6 +424,177 @@
     <button class="btn" id="foundBtn">🎉 見つかった！</button>
 
     <div id="foundMessageArea"></div>
+  </section>
+
+  <!-- TAB6 -->
+  <section id="tab6" class="tab">
+    <h2>⑥ 遺失届の下書きをつくる</h2>
+
+    <div class="warn">
+      ⚠️ このアプリから警視庁サイトへ自動送信することはありません。ここで作った文章を、ご自身で開いたオンライン遺失届の各欄にコピー＆ペーストしてください。すべての入力内容はこの端末にのみ保存され、サーバーには送信されません。
+    </div>
+
+    <a class="btn" href="https://www.keishicho-gto.metro.tokyo.lg.jp/keishicho-u/offer/offerList_detailTop?tempSeq=788" target="_blank" rel="noopener">📝 警視庁 オンライン遺失届を開く</a>
+
+    <div class="card">
+      <p>手続きの流れ（3行）</p>
+      <ol class="step-list">
+        <li>「利用者登録せずに申し込む」を選べば、パスワード設定は不要です。</li>
+        <li>入力したメールアドレスに届くURLから、24時間以内に続きを入力します。</li>
+        <li>時間が空くとやり直しになるため、下の下書きを先に用意してから進めましょう。</li>
+      </ol>
+    </div>
+
+    <h3>下書きに使う質問</h3>
+
+    <label for="lostWhat6">何をなくした？</label>
+    <input type="text" id="lostWhat6" placeholder="例: 家の鍵">
+
+    <label for="itemType6">種類</label>
+    <select id="itemType6">
+      <option value="">選択してください</option>
+      <option value="key">鍵</option>
+      <option value="wallet">財布</option>
+      <option value="phone">スマホ</option>
+      <option value="bag">カバン・バッグ</option>
+      <option value="ic">定期・ICカード</option>
+      <option value="earphone">イヤホン</option>
+      <option value="umbrella">傘</option>
+      <option value="other">その他</option>
+    </select>
+
+    <div id="keyFields6" class="subgroup hidden-field">
+      <label for="keyCount6">本数</label>
+      <select id="keyCount6">
+        <option value="1">1本</option>
+        <option value="2">2本</option>
+        <option value="3">3本</option>
+        <option value="4">4本</option>
+        <option value="5+">5本以上</option>
+      </select>
+      <label for="keyAccessory6">付属</label>
+      <select id="keyAccessory6">
+        <option value="なし">なし</option>
+        <option value="キーホルダー付">キーホルダー付</option>
+        <option value="キーケース付">キーケース付</option>
+      </select>
+    </div>
+
+    <div id="walletFields6" class="subgroup hidden-field">
+      <label for="walletType6">財布の形</label>
+      <select id="walletType6">
+        <option value="長財布">長財布</option>
+        <option value="二つ折り財布">二つ折り財布</option>
+      </select>
+      <div class="note">💡 現金が入っていた場合は、警視庁フォームの「現金の有無」で必ず「有」を選んでください（このアプリでは「無」を基本にしていますが、財布は要注意です）。</div>
+    </div>
+
+    <div id="phoneFields6" class="subgroup hidden-field">
+      <label for="phoneType6">スマホの種類</label>
+      <select id="phoneType6">
+        <option value="iPhone">iPhone</option>
+        <option value="Android">Android</option>
+      </select>
+    </div>
+
+    <div id="icFields6" class="subgroup hidden-field">
+      <label for="icType6">ICカードの種類</label>
+      <select id="icType6">
+        <option value="Suica_なし">Suica（記名なし）</option>
+        <option value="Suica_あり">Suica（記名あり）</option>
+        <option value="PASMO_なし">PASMO（記名なし）</option>
+        <option value="PASMO_あり">PASMO（記名あり）</option>
+      </select>
+    </div>
+
+    <div id="umbrellaFields6" class="subgroup hidden-field">
+      <label for="umbrellaType6">傘の種類</label>
+      <select id="umbrellaType6">
+        <option value="長傘">長傘</option>
+        <option value="折りたたみ傘">折りたたみ傘</option>
+      </select>
+    </div>
+
+    <label for="color6">色</label>
+    <select id="color6">
+      <option value="">選択してください</option>
+      <option value="黒色系">黒色系</option>
+      <option value="紺色系">紺色系</option>
+      <option value="灰色系">灰色系</option>
+      <option value="茶色系">茶色系</option>
+      <option value="白色系">白色系</option>
+      <option value="透明色系">透明色系</option>
+      <option value="赤色系">赤色系</option>
+      <option value="ピンク色系">ピンク色系</option>
+      <option value="緑色系">緑色系</option>
+      <option value="青色系">青色系</option>
+      <option value="紫色系">紫色系</option>
+      <option value="黄色系">黄色系</option>
+      <option value="オレンジ色系">オレンジ色系</option>
+      <option value="金色系">金色系</option>
+      <option value="銀色系">銀色系</option>
+      <option value="ベージュ系">ベージュ系</option>
+      <option value="２色以上">２色以上</option>
+    </select>
+
+    <label for="feature6">目印になる特徴</label>
+    <textarea id="feature6" placeholder="例: 白い猫型ロボットのぬいぐるみ付き、胸にロゴ、水色のライン"></textarea>
+
+    <label for="lastSeen6">最後に見た日時</label>
+    <input type="datetime-local" id="lastSeen6">
+
+    <label for="noticed6">無いと気づいた日時</label>
+    <input type="datetime-local" id="noticed6">
+
+    <label for="placeType6">なくした場所の種類</label>
+    <select id="placeType6">
+      <option value="">選択してください</option>
+      <option value="路上・建物内">路上・建物内</option>
+      <option value="鉄道">鉄道</option>
+      <option value="バス">バス</option>
+      <option value="タクシー">タクシー</option>
+      <option value="不明">不明</option>
+    </select>
+
+    <div id="railFields6" class="subgroup hidden-field">
+      <label for="railCompany6">鉄道会社</label>
+      <select id="railCompany6">
+        <option value="JR">JR</option>
+        <option value="東京メトロ">東京メトロ</option>
+        <option value="都営">都営</option>
+        <option value="その他">その他</option>
+      </select>
+      <label for="railLocation6">電車内・駅構内</label>
+      <select id="railLocation6">
+        <option value="電車内">電車内</option>
+        <option value="駅構内">駅構内</option>
+      </select>
+      <label for="railLine6">路線名</label>
+      <input type="text" id="railLine6" placeholder="例: 東急東横線">
+    </div>
+
+    <label for="remark6">備考（任意）</label>
+    <textarea id="remark6" placeholder="例: 気づいたときは改札を出た後でした"></textarea>
+
+    <button class="btn" id="buildDraft6">下書きをつくる</button>
+
+    <div id="draftResult6"></div>
+
+    <h3>提出後</h3>
+    <p>オンライン遺失届を提出したら、表示される<strong>整理番号</strong>と<strong>パスワード</strong>を控えておきましょう。この端末にのみ保存し、サーバーには送信しません。</p>
+
+    <label for="ticketNumber6">整理番号</label>
+    <input type="text" id="ticketNumber6" placeholder="例: 12345678">
+
+    <label for="ticketPassword6">パスワード</label>
+    <input type="text" id="ticketPassword6" placeholder="設定したパスワード">
+
+    <button class="btn btn-sub" id="saveTicket6">この内容を保存する<span id="savedTicket6Badge"></span></button>
+    <div class="card" id="ticketDisplay6" style="display:none;"></div>
+    <button class="btn btn-danger" id="deleteTicket6" style="display:none;">保存した整理番号・パスワードを削除する</button>
+
+    <a class="btn btn-sub" href="https://www.ishitsu.keishicho.metro.tokyo.lg.jp/syutoku" target="_blank" rel="noopener">🌐 落とし物検索サイトを開く</a>
+    <div class="note">💡 掲載までに数日かかることがあり、公表期間は約3ヶ月です。</div>
   </section>
 
 </main>
@@ -659,6 +872,287 @@
       '<p>③で遺失届を出していた場合は、<strong>取り下げの連絡</strong>も忘れずに行いましょう。</p>' +
       '</div>';
   });
+
+  // --- TAB6: 遺失届の下書き ---
+  (function(){
+    var lostWhat6 = document.getElementById("lostWhat6");
+    var itemType6 = document.getElementById("itemType6");
+    var keyFields6 = document.getElementById("keyFields6");
+    var keyCount6 = document.getElementById("keyCount6");
+    var keyAccessory6 = document.getElementById("keyAccessory6");
+    var walletFields6 = document.getElementById("walletFields6");
+    var walletType6 = document.getElementById("walletType6");
+    var phoneFields6 = document.getElementById("phoneFields6");
+    var phoneType6 = document.getElementById("phoneType6");
+    var icFields6 = document.getElementById("icFields6");
+    var icType6 = document.getElementById("icType6");
+    var umbrellaFields6 = document.getElementById("umbrellaFields6");
+    var umbrellaType6 = document.getElementById("umbrellaType6");
+    var color6 = document.getElementById("color6");
+    var feature6 = document.getElementById("feature6");
+    var lastSeen6 = document.getElementById("lastSeen6");
+    var noticed6 = document.getElementById("noticed6");
+    var placeType6 = document.getElementById("placeType6");
+    var railFields6 = document.getElementById("railFields6");
+    var railCompany6 = document.getElementById("railCompany6");
+    var railLocation6 = document.getElementById("railLocation6");
+    var railLine6 = document.getElementById("railLine6");
+    var remark6 = document.getElementById("remark6");
+    var buildDraft6Btn = document.getElementById("buildDraft6");
+    var draftResult6 = document.getElementById("draftResult6");
+
+    var ticketNumber6 = document.getElementById("ticketNumber6");
+    var ticketPassword6 = document.getElementById("ticketPassword6");
+    var saveTicket6Btn = document.getElementById("saveTicket6");
+    var savedTicket6Badge = document.getElementById("savedTicket6Badge");
+    var ticketDisplay6 = document.getElementById("ticketDisplay6");
+    var deleteTicket6Btn = document.getElementById("deleteTicket6");
+
+    // 種類選択に応じて詳細欄の表示を切り替える
+    var typeFieldMap = {
+      key: keyFields6,
+      wallet: walletFields6,
+      phone: phoneFields6,
+      ic: icFields6,
+      umbrella: umbrellaFields6
+    };
+
+    function updateTypeFields(){
+      Object.keys(typeFieldMap).forEach(function(key){
+        typeFieldMap[key].classList.toggle("hidden-field", itemType6.value !== key);
+      });
+    }
+    itemType6.addEventListener("change", updateTypeFields);
+    updateTypeFields();
+
+    function updateRailFields(){
+      railFields6.classList.toggle("hidden-field", placeType6.value !== "鉄道");
+    }
+    placeType6.addEventListener("change", updateRailFields);
+    updateRailFields();
+
+    // 全角数字マップ（鍵の本数表示に使用）
+    var zenkakuDigits = {"1":"１","2":"２","3":"３","4":"４","5+":"５"};
+
+    function buildItemName(){
+      switch(itemType6.value){
+        case "key":
+          var digit = zenkakuDigits[keyCount6.value] || keyCount6.value;
+          var suffix = keyCount6.value === "5+" ? "本以上" : "本";
+          var name = "鍵" + digit + suffix;
+          if(keyAccessory6.value && keyAccessory6.value !== "なし"){
+            name += "(" + keyAccessory6.value + ")";
+          }
+          return name;
+        case "wallet":
+          return walletType6.value;
+        case "phone":
+          return phoneType6.value;
+        case "bag":
+          return "カバン・バッグ";
+        case "ic":
+          var icParts = icType6.value.split("_");
+          return icParts[0] + "（" + (icParts[1] === "あり" ? "記名あり" : "記名なし") + "）";
+        case "earphone":
+          return "イヤホン";
+        case "umbrella":
+          return umbrellaType6.value;
+        case "other":
+          return "雑品 (該当する物件なし)";
+        default:
+          return "（種類が未選択です）";
+      }
+    }
+
+    function buildMeishou(){
+      if(itemType6.value === "ic"){
+        return icType6.value.indexOf("_あり") !== -1 ? "記名あり（本人名義）" : "記名なし";
+      }
+      return "記名なし";
+    }
+
+    // datetime-local の値を 日付8桁 / 時 / 分 に分割する
+    function splitDatetime(val){
+      if(!val){ return {date:"", hour:"", minute:""}; }
+      var parts = val.split("T");
+      var datePart = (parts[0] || "").replace(/-/g, "");
+      var hm = (parts[1] || "").split(":");
+      return {date:datePart, hour:hm[0] || "", minute:hm[1] || ""};
+    }
+
+    // 特徴は全角150文字以内に切り詰める（超過分は末尾カット。厳密な全角/半角判定はせず文字数で簡略化）
+    var FEATURE_MAX = 150;
+    function truncateFeature(text){
+      var trimmed = (text || "").trim();
+      if(trimmed.length <= FEATURE_MAX){
+        return {text: trimmed, remaining: FEATURE_MAX - trimmed.length};
+      }
+      return {text: trimmed.slice(0, FEATURE_MAX), remaining: 0, truncated: true};
+    }
+
+    // 備考は50文字以内。警視庁フォームで入力不可な記号（〜・丸数字・半角カナ）を置換／除去する
+    var REMARK_MAX = 50;
+    function sanitizeRemark(text){
+      var s = (text || "").trim();
+      s = s.replace(/〜/g, "から");
+      s = s.replace(/[①-⓿㉑-㊿]/g, ""); // 丸数字
+      s = s.replace(/[｡-ﾟ]/g, ""); // 半角カナ・半角記号
+      if(s.length > REMARK_MAX){
+        s = s.slice(0, REMARK_MAX);
+      }
+      return s;
+    }
+
+    function copyRow(label, value, note){
+      var wrap = document.createElement("div");
+      wrap.className = "field-item";
+
+      var labelEl = document.createElement("div");
+      labelEl.className = "field-item-label";
+      labelEl.textContent = label;
+      wrap.appendChild(labelEl);
+
+      var valueEl = document.createElement("div");
+      valueEl.className = "field-item-value";
+      valueEl.textContent = value;
+      wrap.appendChild(valueEl);
+
+      if(note){
+        var noteEl = document.createElement("div");
+        noteEl.className = "note";
+        noteEl.textContent = note;
+        wrap.appendChild(noteEl);
+      }
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn-sm";
+      btn.textContent = "📋 コピー";
+      btn.addEventListener("click", function(){
+        var done = function(){
+          btn.textContent = "コピーしました";
+          btn.classList.add("copied");
+          setTimeout(function(){
+            btn.textContent = "📋 コピー";
+            btn.classList.remove("copied");
+          }, 2000);
+        };
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(value).then(done).catch(function(){
+            fallbackCopy(value, done);
+          });
+        }else{
+          fallbackCopy(value, done);
+        }
+      });
+      wrap.appendChild(btn);
+
+      return wrap;
+    }
+
+    function cardTitle(text){
+      var h = document.createElement("h3");
+      h.textContent = text;
+      return h;
+    }
+
+    buildDraft6Btn.addEventListener("click", function(){
+      if(!itemType6.value){
+        alert("種類を選択してください");
+        return;
+      }
+
+      var lastSeenParts = splitDatetime(lastSeen6.value);
+      var noticedParts = splitDatetime(noticed6.value);
+      var featureResult = truncateFeature(feature6.value);
+      var remarkResult = sanitizeRemark(remark6.value);
+
+      draftResult6.innerHTML = "";
+
+      draftResult6.appendChild(cardTitle("遺失日時（最後に見た）"));
+      draftResult6.appendChild(copyRow("日付（8桁）", lastSeenParts.date || "（未入力）"));
+      draftResult6.appendChild(copyRow("時", lastSeenParts.hour || "（未入力）"));
+      draftResult6.appendChild(copyRow("分", lastSeenParts.minute || "（未入力）"));
+
+      draftResult6.appendChild(cardTitle("遺失日時（気づいた）"));
+      draftResult6.appendChild(copyRow("日付（8桁）", noticedParts.date || "（未入力）"));
+      draftResult6.appendChild(copyRow("時", noticedParts.hour || "（未入力）"));
+      draftResult6.appendChild(copyRow("分", noticedParts.minute || "（未入力）"));
+
+      draftResult6.appendChild(cardTitle("遺失場所"));
+      draftResult6.appendChild(copyRow("遺失場所（概略）", placeType6.value || "（未選択）"));
+      if(placeType6.value === "鉄道"){
+        draftResult6.appendChild(copyRow("鉄道会社", railCompany6.value));
+        draftResult6.appendChild(copyRow("駅構内・電車内", railLocation6.value));
+        draftResult6.appendChild(copyRow("路線名", railLine6.value || "（未入力）"));
+      }
+
+      draftResult6.appendChild(cardTitle("現金・個数"));
+      draftResult6.appendChild(copyRow(
+        "現金の有無",
+        "無",
+        itemType6.value === "wallet" ? "⚠️ 財布に現金が入っていた場合は「有」を選んでください" : null
+      ));
+      draftResult6.appendChild(copyRow("遺失物品の個数", "１個"));
+
+      draftResult6.appendChild(cardTitle("物品情報"));
+      draftResult6.appendChild(copyRow("物品01（選ぶ名前）", buildItemName()));
+      draftResult6.appendChild(copyRow("記名", buildMeishou()));
+      draftResult6.appendChild(copyRow("色", color6.value || "（未選択）"));
+      draftResult6.appendChild(copyRow(
+        "特徴等01（全角150文字以内）",
+        featureResult.text || "（未入力）",
+        featureResult.truncated ? "⚠️ 150文字を超えたため末尾を切り詰めました" : "残り" + featureResult.remaining + "文字入力できます"
+      ));
+      draftResult6.appendChild(copyRow(
+        "備考（全角50文字以内）",
+        remarkResult || "（未入力）",
+        "「〜」は「から」に置換、丸数字・半角カナは自動的に除去しています"
+      ));
+
+      draftResult6.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    // --- 提出後: 整理番号・パスワード ---
+    function renderTicket6(){
+      if(data.tab6Ticket && (data.tab6Ticket.number || data.tab6Ticket.password)){
+        ticketDisplay6.style.display = "block";
+        ticketDisplay6.innerHTML =
+          "<strong>保存済み</strong><br>整理番号: " + escapeHtml(data.tab6Ticket.number || "（未入力）") +
+          "<br>パスワード: " + escapeHtml(data.tab6Ticket.password || "（未入力）");
+        deleteTicket6Btn.style.display = "block";
+      }else{
+        ticketDisplay6.style.display = "none";
+        deleteTicket6Btn.style.display = "none";
+      }
+    }
+
+    if(data.tab6Ticket){
+      ticketNumber6.value = data.tab6Ticket.number || "";
+      ticketPassword6.value = data.tab6Ticket.password || "";
+    }
+    renderTicket6();
+
+    saveTicket6Btn.addEventListener("click", function(){
+      data.tab6Ticket = {
+        number: ticketNumber6.value,
+        password: ticketPassword6.value
+      };
+      saveData(data);
+      savedTicket6Badge.textContent = "保存しました";
+      savedTicket6Badge.className = "saved-badge";
+      setTimeout(function(){ savedTicket6Badge.textContent = ""; }, 2500);
+      renderTicket6();
+    });
+
+    deleteTicket6Btn.addEventListener("click", function(){
+      delete data.tab6Ticket;
+      saveData(data);
+      ticketNumber6.value = "";
+      ticketPassword6.value = "";
+      renderTicket6();
+    });
+  })();
 
 })();
 </script>
